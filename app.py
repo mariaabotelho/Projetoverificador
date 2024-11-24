@@ -8,10 +8,10 @@ from langchain_groq import ChatGroq
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain
 from langchain_community.document_loaders import WebBaseLoader
-import trafilatura
+import trafilatura #para extrair conteúdo dos sites
 
-@dataclass
-class SearchResult:
+@dataclass 
+class SearchResult: #jeitinho bonitinho pra organizar os resultados da minha pesquisa
     title: str
     url: str
     snippet: str
@@ -21,12 +21,13 @@ class SearchResult:
 
 class FakeNewsChecker:
     def __init__(self):
-        self.groq_api_key = "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"
+        self.groq_api_key = "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" #chave do groq, tem que colocar no secrets do streamlit, se não vai dar erro
         self.llm = ChatGroq(
             temperature=0,
             groq_api_key=self.groq_api_key,
             model_name="llama3-8b-8192"
         )
+        #chat disse que é importante usar isso na minha verificação de notícias
 
         self.verification_prompt = PromptTemplate(
             input_variables=["query", "search_results", "article_excerpts", "article_urls", "confirming_excerpts", "contradicting_excerpts"],
@@ -62,15 +63,16 @@ Por favor, forneça:
             llm=self.llm,
             prompt=self.verification_prompt
         )
+        #essa foi a estrutura que a gente fez para fazer a verificação das notícias, a gente começou só com 3 passos de verificação mais depois aumentou para 6
 
-    def extract_excerpt(self, content: str) -> str:
+    def extract_excerpt(self, content: str) -> str: #essa função pega o conteúdo de um artigo e extrai um pedacinho relevante, tipo os 3 primeiros parágrafos, pra usar na análise depois
         """Extrai um trecho relevante do conteúdo"""
         if not content:
             return ""
         sentences = content.split('.')
         return '. '.join(sentences[:3]) + '.'
 
-    def search_duckduckgo(self, query: str, max_results: int = 10) -> List[SearchResult]:
+    def search_duckduckgo(self, query: str, max_results: int = 10) -> List[SearchResult]: #buscando no duckduckgo pois o Google deu errado, já que ele é cheio de burocracia com scraping
         """Realiza busca no DuckDuckGo e extrai os resultados"""
         url = f"https://duckduckgo.com/html/?q={query}"
         headers = {
@@ -82,7 +84,7 @@ Por favor, forneça:
 
         results = []
         for article in soup.find_all('article', {'data-nrn': 'result'})[:max_results]:
-            try:
+            try: #Aqui é para extrair as informações importantes de cada resultado
                 title_elem = article.find('a', {'data-testid': 'result-title-a'})
                 title = title_elem.get_text(strip=True) if title_elem else ''
                 url = title_elem.get('href') if title_elem else ''
@@ -116,7 +118,7 @@ Por favor, forneça:
             if content:
                 confirming_excerpt, contradicting_excerpt = self.extract_relevant_excerpts(content)
                 return content, confirming_excerpt, contradicting_excerpt
-
+            #para se a Trafilatura não der certo, vamos tentar com o WebBaseLoader
             loader = WebBaseLoader(url)
             docs = loader.load()
             content = "\n".join(doc.page_content for doc in docs)
@@ -124,7 +126,8 @@ Por favor, forneça:
             if content:
                 confirming_excerpt, contradicting_excerpt = self.extract_relevant_excerpts(content)
                 return content, confirming_excerpt, contradicting_excerpt
-
+            
+            #por último, a gente botou para tentar extrair direto da página HTML
             response = requests.get(url)
             soup = BeautifulSoup(response.text, 'html.parser')
 
@@ -154,7 +157,7 @@ Por favor, forneça:
 
         return confirming_excerpt.strip(), contradicting_excerpt.strip()
 
-    def verify_claim(self, query: str) -> Tuple[str, List[SearchResult]]:
+    def verify_claim(self, query: str) -> Tuple[str, List[SearchResult]]: #uma das funções mais importantes desse códigos pois faz a busca no duck, extrai e analisa e gera a analise final
         """Verifica uma afirmação usando busca e análise"""
         with st.status("Pesquisando fontes..."):
             search_results = self.search_duckduckgo(query)
@@ -196,7 +199,7 @@ Por favor, forneça:
         return analysis, search_results
 
 
-def create_sidebar():
+def create_sidebar(): #isso é autoexplicativo kkkkkkk sidebar com informações gerais do projeto
     with st.sidebar:
         st.image("logo verifik.png", width=200)
         st.title("Sobre o Verifik")
@@ -219,7 +222,7 @@ def create_sidebar():
         st.caption("Clarissa Treptow")
         st.caption("Catarina Moll")
 
-def show_usage_tips():
+def show_usage_tips(): #Nosso modelo as vezes não é 100% certeiro, por isso a gente achou importante colocar essas instruções que ajudam o verificador a dar uma resposta com mais eficácia
     with st.expander("📝 Dicas para obter melhores resultados"):
         st.info("""
         **Para uma verificação mais precisa:**
@@ -253,15 +256,13 @@ def main():
 
     create_sidebar()
 
-    # Cabeçalho principal
+    # cabeçalho principal
     st.title("Bem-vindo ao Verifik! 🔍")
     st.subheader("Seu verificador inteligente de notícias")
     st.caption("Descubra a verdade por trás das informações com rapidez e confiança!") 
-
-    # Dicas de uso
     show_usage_tips()
 
-    # Container principal
+    # container onde a pessoa vai colocar a informação
     with st.container():
         st.write("---")
         query = st.text_area(
@@ -281,9 +282,9 @@ def main():
                 with st.spinner("Analisando..."):
                     analysis, results = checker.verify_claim(query)
                 
-                # Função de classificação
+                # função de classificação da notícia, testamos diversas notícias para conseguir indicadores frequentes que o modelo utilizava
                 def classify_result(analysis_lower):
-                    # Indicadores fortes de FALSO
+                    # indicadores fortes de FALSO
                     false_indicators = [
                         "falsa",
                         "não é verdadeira",
@@ -292,7 +293,7 @@ def main():
                         "não corresponde aos fatos"
                     ]
                     
-                    # Indicadores fortes de VERDADEIRO
+                    # indicadores fortes de VERDADEIRO
                     true_indicators = [
                         "verdadeira",
                         "é correta",
@@ -301,7 +302,7 @@ def main():
                         "fontes confirmam"
                     ]
                     
-                    # Indicadores de INCONCLUSIVO
+                    # indicadores de INCONCLUSIVO
                     inconclusive_indicators = [
                         "não há consenso",
                         "evidências são inconclusivas",
@@ -317,17 +318,16 @@ def main():
                         "nem todas as fontes concordam"
                     ]
                     
-                    # Verificar se há indicadores de resultados mistos
+                    # verificar se há indicadores de resultados mistos
                     has_mixed_evidence = any(indicator in analysis_lower for indicator in inconclusive_indicators)
                     
-                    # Verificar se há termos que frequentemente aparecem juntos em evidências conflitantes
+                    # verificar se teve termos que frequentemente aparecem juntos em evidências conflitantes
                     has_conflicting_terms = (
                         ("algumas" in analysis_lower and "outras" in analysis_lower) or
                         ("confirma" in analysis_lower and "contradiz" in analysis_lower) or
                         ("evidências" in analysis_lower and "contraditórias" in analysis_lower)
                     )
                     
-                    # Lógica de classificação
                     if has_mixed_evidence or has_conflicting_terms:
                         st.info("ℹ️ INCONCLUSIVO", icon=None)
                     elif any(indicator in analysis_lower for indicator in false_indicators):
@@ -337,15 +337,12 @@ def main():
                     else:
                         st.info("ℹ️ INCONCLUSIVO", icon=None)  # Caso padrão se nenhum padrão claro for encontrado
 
-                # Usar a nova função de classificação
                 analysis_lower = analysis.lower()
                 classify_result(analysis_lower)
                 
-                # Análise detalhada em container
                 with st.container():
                     st.markdown(analysis)
                     
-                # Fontes em expanders
                 for idx, result in enumerate(results, 1):
                     with st.expander(f"Fonte {idx}: {result.title}"):
                         st.write(f"**Fonte:** {result.source}")
