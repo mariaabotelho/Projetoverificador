@@ -284,18 +284,65 @@ def main():
                 analysis, results = checker.verify_claim(query)
             
             # Extrair o resultado principal
-            analysis_lower = analysis.lower()
-            if ("contradiz" in analysis_lower and "confirma" in analysis_lower) or \
-               ("algumas fontes sugerem" in analysis_lower and "outras fontes" in analysis_lower) or \
-               ("embora" in analysis_lower and "no entanto" in analysis_lower) or \
-               "é parcialmente" in analysis_lower:
-                st.warning("⚠️ PARCIALMENTE VERDADEIRO", icon=None)
-            elif "falsa" in analysis_lower or "não é verdadeira" in analysis_lower:
-                st.error("❌ FALSO", icon=None)
-            elif "verdadeira" in analysis_lower:
-                st.success("✅ VERDADEIRO", icon=None)
-            else:
-                st.info("ℹ️ INCONCLUSIVO", icon=None)
+            # Função de classificação
+def classify_result(analysis_lower):
+    # Indicadores fortes de FALSO
+    false_indicators = [
+        "falsa",
+        "não é verdadeira",
+        "não há evidências que suportem",
+        "é incorreta",
+        "não corresponde aos fatos"
+    ]
+    
+    # Indicadores fortes de VERDADEIRO
+    true_indicators = [
+        "verdadeira",
+        "é correta",
+        "é confirmada",
+        "evidências confirmam",
+        "fontes confirmam"
+    ]
+    
+    # Indicadores de INCONCLUSIVO
+    inconclusive_indicators = [
+        "não há consenso",
+        "evidências são inconclusivas",
+        "algumas fontes sugerem",
+        "embora",
+        "entretanto",
+        "por outro lado",
+        "mais estudos são necessários",
+        "evidência é limitada",
+        "não é possível concluir",
+        "é amplamente contestada",
+        "há discordância",
+        "nem todas as fontes concordam"
+    ]
+    
+    # Verificar se há indicadores de resultados mistos
+    has_mixed_evidence = any(indicator in analysis_lower for indicator in inconclusive_indicators)
+    
+    # Verificar se há termos que frequentemente aparecem juntos em evidências conflitantes
+    has_conflicting_terms = (
+        ("algumas" in analysis_lower and "outras" in analysis_lower) or
+        ("confirma" in analysis_lower and "contradiz" in analysis_lower) or
+        ("evidências" in analysis_lower and "contraditórias" in analysis_lower)
+    )
+    
+    # Lógica de classificação
+    if has_mixed_evidence or has_conflicting_terms:
+        st.info("ℹ️ INCONCLUSIVO", icon=None)
+    elif any(indicator in analysis_lower for indicator in false_indicators):
+        st.error("❌ FALSO", icon=None)
+    elif any(indicator in analysis_lower for indicator in true_indicators):
+        st.success("✅ VERDADEIRO", icon=None)
+    else:
+        st.info("ℹ️ INCONCLUSIVO", icon=None)  # Caso padrão se nenhum padrão claro for encontrado
+
+# Usar a nova função de classificação
+analysis_lower = analysis.lower()
+classify_result(analysis_lower)
             
             # Análise detalhada em container
             with st.container():
