@@ -215,13 +215,9 @@ def create_sidebar():
         """)
         
         st.subheader("Criadoras")
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            st.caption("Maria Botelho")
-        with col2:
-            st.caption("Clarissa Treptow")
-        with col3:
-            st.caption("Catarina Moll")
+        st.caption("Maria Botelho")
+        st.caption("Clarissa Treptow")
+        st.caption("Catarina Moll")
 
 def show_usage_tips():
     with st.expander("📝 Dicas para obter melhores resultados"):
@@ -233,7 +229,7 @@ def show_usage_tips():
         3. **Inclua datas**: Quando possível, especifique o período do evento
         
         **Exemplo de uma boa consulta:**
-        "Ministério da Saúde confirmou 5 casos de dengue tipo 3 em São Paulo em janeiro de 2024"
+        "Michael Phelps ganhou 8 medalhas de ouro nas Olimpíadas de Pequim em 2008"
         """)
         
         st.warning("""
@@ -274,7 +270,7 @@ def main():
         query = st.text_area(
             "Digite a afirmação que deseja verificar:",
             height=100,
-            placeholder="Ex: Ministério da Saúde confirmou 5 casos de dengue tipo 3 em São Paulo em janeiro de 2024"
+            placeholder="Ex: Brasil ganhou a Copa América de 2019 vencendo o Peru na final"
         )
         
         col1, col2, col3 = st.columns([1, 1, 1])
