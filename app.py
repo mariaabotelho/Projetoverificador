@@ -256,7 +256,7 @@ def main():
     # Cabeçalho principal
     st.title("Bem-vindo ao Verifik! 🔍")
     st.subheader("Seu verificador inteligente de notícias")
-    st.caption("Aqui você separa o joio do trigo com agilidade e precisão!") 
+    st.caption("Descubra a verdade por trás das informações com rapidez e confiança!") 
 
     # Dicas de uso
     show_usage_tips()
