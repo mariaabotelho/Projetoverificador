@@ -253,12 +253,8 @@ def main():
     create_sidebar()
 
     # Cabeçalho principal
-    col_logo, col_title = st.columns([1, 4])
-    with col_logo:
-        st.image("logo verifik.png", width=200)
-    with col_title:
-    # Removendo o título redundante
-        st.subheader("Verificação inteligente de notícias")
+    st.image("logo verifik.png", width=300)  # Aumentando o tamanho da imagem
+    st.subheader("O Seu Verificador Inteligente De Notícias", anchor=False)  # Novo slogan centralizado
 
     # Dicas de uso
     show_usage_tips()
