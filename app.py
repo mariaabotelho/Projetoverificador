@@ -362,5 +362,6 @@ def main():
 elif verify_button:
     st.warning("Por favor, digite uma afirmação para verificar.")
 
+
 if __name__ == "__main__":
     main()
