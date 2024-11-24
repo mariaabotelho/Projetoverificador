@@ -276,91 +276,91 @@ def main():
         with col2:
             verify_button = st.button("Verificar", type="primary", use_container_width=True)
 
-    if verify_button and query:
-        checker = FakeNewsChecker()
-    
-        try:
-            with st.spinner("Analisando..."):
-            analysis, results = checker.verify_claim(query)
-        
-        # Função de classificação
-        def classify_result(analysis_lower):
-            # Indicadores fortes de FALSO
-            false_indicators = [
-                "falsa",
-                "não é verdadeira",
-                "não há evidências que suportem",
-                "é incorreta",
-                "não corresponde aos fatos"
-            ]
+        if verify_button and query:
+            checker = FakeNewsChecker()
             
-            # Indicadores fortes de VERDADEIRO
-            true_indicators = [
-                "verdadeira",
-                "é correta",
-                "é confirmada",
-                "evidências confirmam",
-                "fontes confirmam"
-            ]
-            
-            # Indicadores de INCONCLUSIVO
-            inconclusive_indicators = [
-                "não há consenso",
-                "evidências são inconclusivas",
-                "algumas fontes sugerem",
-                "embora",
-                "entretanto",
-                "por outro lado",
-                "mais estudos são necessários",
-                "evidência é limitada",
-                "não é possível concluir",
-                "é amplamente contestada",
-                "há discordância",
-                "nem todas as fontes concordam"
-            ]
-            
-            # Verificar se há indicadores de resultados mistos
-            has_mixed_evidence = any(indicator in analysis_lower for indicator in inconclusive_indicators)
-            
-            # Verificar se há termos que frequentemente aparecem juntos em evidências conflitantes
-            has_conflicting_terms = (
-                ("algumas" in analysis_lower and "outras" in analysis_lower) or
-                ("confirma" in analysis_lower and "contradiz" in analysis_lower) or
-                ("evidências" in analysis_lower and "contraditórias" in analysis_lower)
-            )
-            
-            # Lógica de classificação
-            if has_mixed_evidence or has_conflicting_terms:
-                st.info("ℹ️ INCONCLUSIVO", icon=None)
-            elif any(indicator in analysis_lower for indicator in false_indicators):
-                st.error("❌ FALSO", icon=None)
-            elif any(indicator in analysis_lower for indicator in true_indicators):
-                st.success("✅ VERDADEIRO", icon=None)
-            else:
-                st.info("ℹ️ INCONCLUSIVO", icon=None)  # Caso padrão se nenhum padrão claro for encontrado
+            try:
+                with st.spinner("Analisando..."):
+                    analysis, results = checker.verify_claim(query)
+                
+                # Função de classificação
+                def classify_result(analysis_lower):
+                    # Indicadores fortes de FALSO
+                    false_indicators = [
+                        "falsa",
+                        "não é verdadeira",
+                        "não há evidências que suportem",
+                        "é incorreta",
+                        "não corresponde aos fatos"
+                    ]
+                    
+                    # Indicadores fortes de VERDADEIRO
+                    true_indicators = [
+                        "verdadeira",
+                        "é correta",
+                        "é confirmada",
+                        "evidências confirmam",
+                        "fontes confirmam"
+                    ]
+                    
+                    # Indicadores de INCONCLUSIVO
+                    inconclusive_indicators = [
+                        "não há consenso",
+                        "evidências são inconclusivas",
+                        "algumas fontes sugerem",
+                        "embora",
+                        "entretanto",
+                        "por outro lado",
+                        "mais estudos são necessários",
+                        "evidência é limitada",
+                        "não é possível concluir",
+                        "é amplamente contestada",
+                        "há discordância",
+                        "nem todas as fontes concordam"
+                    ]
+                    
+                    # Verificar se há indicadores de resultados mistos
+                    has_mixed_evidence = any(indicator in analysis_lower for indicator in inconclusive_indicators)
+                    
+                    # Verificar se há termos que frequentemente aparecem juntos em evidências conflitantes
+                    has_conflicting_terms = (
+                        ("algumas" in analysis_lower and "outras" in analysis_lower) or
+                        ("confirma" in analysis_lower and "contradiz" in analysis_lower) or
+                        ("evidências" in analysis_lower and "contraditórias" in analysis_lower)
+                    )
+                    
+                    # Lógica de classificação
+                    if has_mixed_evidence or has_conflicting_terms:
+                        st.info("ℹ️ INCONCLUSIVO", icon=None)
+                    elif any(indicator in analysis_lower for indicator in false_indicators):
+                        st.error("❌ FALSO", icon=None)
+                    elif any(indicator in analysis_lower for indicator in true_indicators):
+                        st.success("✅ VERDADEIRO", icon=None)
+                    else:
+                        st.info("ℹ️ INCONCLUSIVO", icon=None)  # Caso padrão se nenhum padrão claro for encontrado
 
-        # Usar a nova função de classificação
-        analysis_lower = analysis.lower()
-        classify_result(analysis_lower)
-        
-        # Análise detalhada em container
-        with st.container():
-            st.markdown(analysis)
-            
-        # Fontes em expanders
-        for idx, result in enumerate(results, 1):
-            with st.expander(f"Fonte {idx}: {result.title}"):
-                st.write(f"**Fonte:** {result.source}")
-                st.write(f"**Data:** {result.date}")
-                st.write(f"**URL:** {result.url}")
-                if result.excerpt:
-                    st.info(f"**Trecho relevante:** {result.excerpt}")
+                # Usar a nova função de classificação
+                analysis_lower = analysis.lower()
+                classify_result(analysis_lower)
+                
+                # Análise detalhada em container
+                with st.container():
+                    st.markdown(analysis)
+                    
+                # Fontes em expanders
+                for idx, result in enumerate(results, 1):
+                    with st.expander(f"Fonte {idx}: {result.title}"):
+                        st.write(f"**Fonte:** {result.source}")
+                        st.write(f"**Data:** {result.date}")
+                        st.write(f"**URL:** {result.url}")
+                        if result.excerpt:
+                            st.info(f"**Trecho relevante:** {result.excerpt}")
 
-    except Exception as e:
-        st.error(f"Ocorreu um erro durante a análise: {str(e)}")
+            except Exception as e:
+                st.error(f"Ocorreu um erro durante a análise: {str(e)}")
 
-elif verify_button:
-    st.warning("Por favor, digite uma afirmação para verificar.")
+        elif verify_button:
+            st.warning("Por favor, digite uma afirmação para verificar.")
 
 
 if __name__ == "__main__":
