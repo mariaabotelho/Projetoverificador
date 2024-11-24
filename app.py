@@ -265,8 +265,8 @@ def main():
     with st.container():
         st.write("---")
         query = st.text_area(
-            "Digite a afirmação que deseja verificar:",
-            height=100,
+            "**Digite a afirmação que deseja verificar:**",
+            height=300,
             placeholder="Ex: Brasil ganhou a Copa América de 2019 vencendo o Peru na final"
         )
         
