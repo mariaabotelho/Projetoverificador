@@ -277,10 +277,10 @@ def main():
             verify_button = st.button("Verificar", type="primary", use_container_width=True)
 
     if verify_button and query:
-    checker = FakeNewsChecker()
+        checker = FakeNewsChecker()
     
-    try:
-        with st.spinner("Analisando..."):
+        try:
+            with st.spinner("Analisando..."):
             analysis, results = checker.verify_claim(query)
         
         # Função de classificação
