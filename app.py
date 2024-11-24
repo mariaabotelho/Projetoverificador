@@ -284,12 +284,16 @@ def main():
                 analysis, results = checker.verify_claim(query)
             
             # Extrair o resultado principal
-            if "verdadeira" in analysis.lower():
-                st.success("✅ VERDADEIRO", icon=None)
-            elif "falsa" in analysis.lower():
-                st.error("❌ FALSO", icon=None)
-            elif "parcialmente" in analysis.lower():
+            analysis_lower = analysis.lower()
+            if ("contradiz" in analysis_lower and "confirma" in analysis_lower) or \
+               ("algumas fontes sugerem" in analysis_lower and "outras fontes" in analysis_lower) or \
+               ("embora" in analysis_lower and "no entanto" in analysis_lower) or \
+               "é parcialmente" in analysis_lower:
                 st.warning("⚠️ PARCIALMENTE VERDADEIRO", icon=None)
+            elif "falsa" in analysis_lower or "não é verdadeira" in analysis_lower:
+                st.error("❌ FALSO", icon=None)
+            elif "verdadeira" in analysis_lower:
+                st.success("✅ VERDADEIRO", icon=None)
             else:
                 st.info("ℹ️ INCONCLUSIVO", icon=None)
             
