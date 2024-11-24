@@ -258,7 +258,7 @@ def main():
         st.image("logo verifik.png", width=200)
     with col_title:
     # Removendo o título redundante
-        st.caption("Verificação inteligente de notícias")
+        st.subheader("Verificação inteligente de notícias")
 
     # Dicas de uso
     show_usage_tips()
