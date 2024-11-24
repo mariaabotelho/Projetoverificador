@@ -254,7 +254,9 @@ def main():
     create_sidebar()
 
     # Cabeçalho principal
-    st.subheader("**Verik** é o seu verificador inteligente de notícias", anchor=False)  
+    st.title("Bem-vindo ao Verifik! 🔍")
+    st.subheader("Seu verificador inteligente de notícias")
+    st.caption("Aqui você separa o joio do trigo com agilidade e precisão!") 
 
     # Dicas de uso
     show_usage_tips()
