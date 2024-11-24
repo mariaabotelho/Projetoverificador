@@ -254,7 +254,7 @@ def main():
 
     # Cabeçalho principal
     st.image("logo verifik.png", width=300)  # Aumentando o tamanho da imagem
-    st.subheader("**Verik** é o seu verificador inteligente de notícias", anchor=False)  o
+    st.subheader("**Verik** é o seu verificador inteligente de notícias", anchor=False)  
 
     # Dicas de uso
     show_usage_tips()
