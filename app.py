@@ -198,6 +198,7 @@ Por favor, forneça:
 
 def create_sidebar():
     with st.sidebar:
+        st.image("logo verifik.png", width=200)
         st.title("Sobre o Verifik")
         
         st.write("""
