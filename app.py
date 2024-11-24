@@ -277,51 +277,45 @@ def main():
             verify_button = st.button("Verificar", type="primary", use_container_width=True)
 
     if verify_button and query:
-        checker = FakeNewsChecker()
-        
-        try:
-            with st.spinner("Analisando..."):
-                analysis, results = checker.verify_claim(query)
+            checker = FakeNewsChecker()
             
-            # Extrair o resultado principal
-            if "verdadeira" in analysis.lower():
-                status_color = "success"
-                status_text = "VERDADEIRO"
-            elif "falsa" in analysis.lower():
-                status_color = "error"
-                status_text = "FALSO"
-            elif "parcialmente" in analysis.lower():
-                status_color = "warning"
-                status_text = "PARCIALMENTE VERDADEIRO"
-            else:
-                status_color = "info"
-                status_text = "INCONCLUSIVO"
+            try:
+                with st.spinner("Analisando..."):
+                    analysis, results = checker.verify_claim(query)
+                
+                # Extrair o resultado principal
+                if "verdadeira" in analysis.lower():
+                    status_color = "success"
+                    status_text = "VERDADEIRO"
+                elif "falsa" in analysis.lower():
+                    status_color = "error"
+                    status_text = "FALSO"
+                elif "parcialmente" in analysis.lower():
+                    status_color = "warning"
+                    status_text = "PARCIALMENTE VERDADEIRO"
+                else:
+                    status_color = "info"
+                    status_text = "INCONCLUSIVO"
 
-            # Exibir resultado principal em destaque
-            st.markdown("---")
-            st.markdown("### Resultado da Verificação")
-            st.markdown(f":{status_color}[**{status_text}**]")
-            
-            # Análise detalhada em container
-            with st.container():
-                st.markdown("### Análise Detalhada")
-                st.markdown(analysis)
-            
-            # Fontes em expanders
-            st.markdown("### Fontes Consultadas")
-            for idx, result in enumerate(results, 1):
-                with st.expander(f"Fonte {idx}: {result.title}"):
-                    st.write(f"**Fonte:** {result.source}")
-                    st.write(f"**Data:** {result.date}")
-                    st.write(f"**URL:** {result.url}")
-                    if result.excerpt:
-                        st.info(f"**Trecho relevante:** {result.excerpt}")
-
-        except Exception as e:
-            st.error(f"Ocorreu um erro durante a análise: {str(e)}")
-            
-    elif verify_button:
-        st.warning("Por favor, digite uma afirmação para verificar.")
+                # Exibir resultado principal em destaque
+                st.markdown("---")
+                st.markdown(f"### Resultado da Verificação")
+                st.markdown(f":{status_color}[**{status_text}**]")
+                
+                # Análise detalhada em container
+                with st.container():
+                    st.markdown("### Análise Detalhada")
+                    st.markdown(analysis)
+                
+                # Fontes em expanders
+                st.markdown("### Fontes Consultadas")
+                for idx, result in enumerate(results, 1):
+                    with st.expander(f"Fonte {idx}: {result.title}"):
+                        st.write(f"**Fonte:** {result.source}")
+                        st.write(f"**Data:** {result.date}")
+                        st.write(f"**URL:** {result.url}")
+                        if result.excerpt:
+                            st.info(f"**Trecho relevante:** {result.excerpt}")
 
 if __name__ == "__main__":
     main()
