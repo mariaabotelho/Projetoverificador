@@ -263,7 +263,7 @@ def main():
 
     # Container principal
     with st.container():
-        st.subheader("---")
+        st.write("---")
         query = st.text_area(
             "**Digite a afirmação que deseja verificar:**",
             height=100,
