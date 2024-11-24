@@ -253,7 +253,6 @@ def main():
     create_sidebar()
 
     # Cabeçalho principal
-    st.image("logo verifik.png", width=400)  # Aumentando o tamanho da imagem
     st.subheader("**Verik** é o seu verificador inteligente de notícias", anchor=False)  
 
     # Dicas de uso
