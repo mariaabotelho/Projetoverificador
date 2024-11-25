@@ -27,7 +27,7 @@ class FakeNewsChecker:
             groq_api_key=self.groq_api_key,
             model_name="llama3-8b-8192"
         )
-        #chat disse que é importante usar isso na minha verificação de notícias
+        
 
         self.verification_prompt = PromptTemplate(
             input_variables=["query", "search_results", "article_excerpts", "article_urls", "confirming_excerpts", "contradicting_excerpts"],
