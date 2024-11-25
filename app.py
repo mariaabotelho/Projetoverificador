@@ -317,7 +317,9 @@ def main():
                         "não corresponde aos fatos",
                         "não foi criado",
                         "não foi fundado",
-                        "não há evidências que suportem"
+                        "não há evidências que suportem",
+                        "é falso",
+                        "é FALSO"
                     ]
             
                     true_indicators = [
@@ -328,7 +330,10 @@ def main():
                         "realmente aconteceu",
                         "de fato ocorreu",
                         "é confirmada por",
-                        "comprova-se que"
+                        "é verdade",
+                        "comprova-se que",
+                        "é VERDADEIRA",
+                        "é **VERDADEIRA**"
                     ]
             
                     # 4. Contagem ponderada de indicadores
