@@ -296,7 +296,7 @@ def main():
             
                     # 2. Verificar termos explícitos na conclusão
                     if conclusion_section:
-                       explicit_false_terms = ["é falsa", "é **falsa**", "é falso", "é **falso**"]
+                        explicit_false_terms = ["é falsa", "é **falsa**", "é falso", "é **falso**"]
                         explicit_true_terms = ["é verdadeira", "é **verdadeira**", "é verdadeiro", "é **verdadeiro**"]
                 
                         if any(term in conclusion_section for term in explicit_false_terms):
