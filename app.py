@@ -276,82 +276,82 @@ def main():
             verify_button = st.button("Verificar", type="primary", use_container_width=True)
 
         if verify_button and query:
-            checker = FakeNewsChecker()
-            
-            try:
-                with st.spinner("Analisando..."):
-                    analysis, results = checker.verify_claim(query)
-                
-                # função de classificação da notícia, testamos diversas notícias para conseguir indicadores frequentes que o modelo utilizava
-                def classify_result(analysis_lower):
-    # 1. Primeiro procurar pela conclusão explícita no texto
-    conclusion_section = ""
+    checker = FakeNewsChecker()
     
-    # Encontrar a seção de conclusão
-    if "conclusão final" in analysis_lower:
-        start_idx = analysis_lower.find("conclusão final")
-        end_idx = analysis_lower.find("**", start_idx + 15)
-        if end_idx != -1:
-            conclusion_section = analysis_lower[start_idx:end_idx].lower()
-    
-    # 2. Verificar termos explícitos na conclusão
-    if conclusion_section:
-        explicit_false_terms = ["é falsa", "é **falsa**", "é falso", "é **falso**"]
-        explicit_true_terms = ["é verdadeira", "é **verdadeira**", "é verdadeiro", "é **verdadeiro**"]
+    try:
+        with st.spinner("Analisando..."):
+            analysis, results = checker.verify_claim(query)
         
-        if any(term in conclusion_section for term in explicit_false_terms):
-            st.error("❌ FALSO", icon=None)
-            return
-        elif any(term in conclusion_section for term in explicit_true_terms):
-            st.success("✅ VERDADEIRO", icon=None)
-            return
-    
-    # 3. Se não encontrou conclusão explícita, verificar indicadores fortes em todo o texto
-    false_indicators = [
-        "não ganhou",
-        "não venceu",
-        "não ocorreu",
-        "não aconteceu",
-        "não existe",
-        "é incorreta",
-        "não corresponde aos fatos",
-        "não foi criado",
-        "não foi fundado",
-        "não há evidências que suportem"
-    ]
-    
-    true_indicators = [
-        "foi confirmado",
-        "foi comprovado",
-        "evidências confirmam",
-        "fontes confirmam",
-        "realmente aconteceu",
-        "de fato ocorreu",
-        "é confirmada por",
-        "comprova-se que"
-    ]
-    
-    # 4. Contagem ponderada de indicadores
-    false_count = sum(1 for indicator in false_indicators if indicator in analysis_lower)
-    true_count = sum(1 for indicator in true_indicators if indicator in analysis_lower)
-    
-    # 5. Verificar nível de confiança
-    confidence_section = analysis_lower[analysis_lower.find("nível de confiança"):].split("**")[0].lower()
-    low_confidence = "baixo" in confidence_section or "limitado" in confidence_section
-    
-    # 6. Tomar decisão final
-    if low_confidence and (false_count == 0 and true_count == 0):
-        st.info("ℹ️ INCONCLUSIVO", icon=None)
-    elif false_count > true_count:
-        st.error("❌ FALSO", icon=None)
-    elif true_count > false_count:
-        st.success("✅ VERDADEIRO", icon=None)
-    else:
-        # Se houver empate nos indicadores, procurar por contradições explícitas
-        if "não há contradições" in analysis_lower or "sem contradições" in analysis_lower:
-            st.success("✅ VERDADEIRO", icon=None)
-        else:
-        st.info("ℹ️ INCONCLUSIVO", icon=None)
+        # função de classificação da notícia, testamos diversas notícias para conseguir indicadores frequentes que o modelo utilizava
+        def classify_result(analysis_lower):
+            # 1. Primeiro procurar pela conclusão explícita no texto
+            conclusion_section = ""
+            
+            # Encontrar a seção de conclusão
+            if "conclusão final" in analysis_lower:
+                start_idx = analysis_lower.find("conclusão final")
+                end_idx = analysis_lower.find("**", start_idx + 15)
+                if end_idx != -1:
+                    conclusion_section = analysis_lower[start_idx:end_idx].lower()
+            
+            # 2. Verificar termos explícitos na conclusão
+            if conclusion_section:
+                explicit_false_terms = ["é falsa", "é **falsa**", "é falso", "é **falso**"]
+                explicit_true_terms = ["é verdadeira", "é **verdadeira**", "é verdadeiro", "é **verdadeiro**"]
+                
+                if any(term in conclusion_section for term in explicit_false_terms):
+                    st.error("❌ FALSO", icon=None)
+                    return
+                elif any(term in conclusion_section for term in explicit_true_terms):
+                    st.success("✅ VERDADEIRO", icon=None)
+                    return
+            
+            # 3. Se não encontrou conclusão explícita, verificar indicadores fortes em todo o texto
+            false_indicators = [
+                "não ganhou",
+                "não venceu",
+                "não ocorreu",
+                "não aconteceu",
+                "não existe",
+                "é incorreta",
+                "não corresponde aos fatos",
+                "não foi criado",
+                "não foi fundado",
+                "não há evidências que suportem"
+            ]
+            
+            true_indicators = [
+                "foi confirmado",
+                "foi comprovado",
+                "evidências confirmam",
+                "fontes confirmam",
+                "realmente aconteceu",
+                "de fato ocorreu",
+                "é confirmada por",
+                "comprova-se que"
+            ]
+            
+            # 4. Contagem ponderada de indicadores
+            false_count = sum(1 for indicator in false_indicators if indicator in analysis_lower)
+            true_count = sum(1 for indicator in true_indicators if indicator in analysis_lower)
+            
+            # 5. Verificar nível de confiança
+            confidence_section = analysis_lower[analysis_lower.find("nível de confiança"):].split("**")[0].lower()
+            low_confidence = "baixo" in confidence_section or "limitado" in confidence_section
+            
+            # 6. Tomar decisão final
+            if low_confidence and (false_count == 0 and true_count == 0):
+                st.info("ℹ️ INCONCLUSIVO", icon=None)
+            elif false_count > true_count:
+                st.error("❌ FALSO", icon=None)
+            elif true_count > false_count:
+                st.success("✅ VERDADEIRO", icon=None)
+            else:
+                # Se houver empate nos indicadores, procurar por contradições explícitas
+                if "não há contradições" in analysis_lower or "sem contradições" in analysis_lower:
+                    st.success("✅ VERDADEIRO", icon=None)
+                else:
+                    st.info("ℹ️ INCONCLUSIVO", icon=None)
 
                 analysis_lower = analysis.lower()
                 classify_result(analysis_lower)
