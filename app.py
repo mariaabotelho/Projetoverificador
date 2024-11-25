@@ -351,7 +351,7 @@ def main():
                         if "não há contradições" in analysis_lower or "sem contradições" in analysis_lower:
                             st.success("✅ VERDADEIRO", icon=None)
                         else:
-                        st.info("ℹ️ INCONCLUSIVO", icon=None)
+                            st.info("ℹ️ INCONCLUSIVO", icon=None)
 
                 analysis_lower = analysis.lower()
                 classify_result(analysis_lower)
