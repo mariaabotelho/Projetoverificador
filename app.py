@@ -296,7 +296,7 @@ def main():
             
                     # 2. Verificar termos explícitos na conclusão
                     if conclusion_section:
-                        explicit_false_terms = ["é falsa", "é **falsa**", "é falso", "é **falso**"]
+                       explicit_false_terms = ["é falsa", "é **falsa**", "é falso", "é **falso**"]
                         explicit_true_terms = ["é verdadeira", "é **verdadeira**", "é verdadeiro", "é **verdadeiro**"]
                 
                         if any(term in conclusion_section for term in explicit_false_terms):
@@ -318,40 +318,40 @@ def main():
                         "não foi criado",
                         "não foi fundado",
                         "não há evidências que suportem"
-                   ]
+                    ]
             
-                   true_indicators = [
-                       "foi confirmado",
-                       "foi comprovado",
-                       "evidências confirmam",
-                       "fontes confirmam",
-                       "realmente aconteceu",
-                       "de fato ocorreu",
-                       "é confirmada por",
-                       "comprova-se que"
-                  ]
+                    true_indicators = [
+                        "foi confirmado",
+                        "foi comprovado",
+                        "evidências confirmam",
+                        "fontes confirmam",
+                        "realmente aconteceu",
+                        "de fato ocorreu",
+                        "é confirmada por",
+                        "comprova-se que"
+                    ]
             
-                 # 4. Contagem ponderada de indicadores
-                 false_count = sum(1 for indicator in false_indicators if indicator in analysis_lower)
-                 true_count = sum(1 for indicator in true_indicators if indicator in analysis_lower)
+                    # 4. Contagem ponderada de indicadores
+                    false_count = sum(1 for indicator in false_indicators if indicator in analysis_lower)
+                    true_count = sum(1 for indicator in true_indicators if indicator in analysis_lower)
             
-                 # 5. Verificar nível de confiança
-                 confidence_section = analysis_lower[analysis_lower.find("nível de confiança"):].split("**")[0].lower()
-                 low_confidence = "baixo" in confidence_section or "limitado" in confidence_section
+                    # 5. Verificar nível de confiança
+                    confidence_section = analysis_lower[analysis_lower.find("nível de confiança"):].split("**")[0].lower()
+                    low_confidence = "baixo" in confidence_section or "limitado" in confidence_section
             
-                 # 6. Tomar decisão final
-                 if low_confidence and (false_count == 0 and true_count == 0):
-                     st.info("ℹ️ INCONCLUSIVO", icon=None)
-                 elif false_count > true_count:
-                     st.error("❌ FALSO", icon=None)
-                 elif true_count > false_count:
-                     st.success("✅ VERDADEIRO", icon=None)
-                 else:
-                     # Se houver empate nos indicadores, procurar por contradições explícitas
-                     if "não há contradições" in analysis_lower or "sem contradições" in analysis_lower:
-                         st.success("✅ VERDADEIRO", icon=None)
-                     else:
-                         st.info("ℹ️ INCONCLUSIVO", icon=None)
+                    # 6. Tomar decisão final
+                    if low_confidence and (false_count == 0 and true_count == 0):
+                        st.info("ℹ️ INCONCLUSIVO", icon=None)
+                    elif false_count > true_count:
+                        st.error("❌ FALSO", icon=None)
+                    elif true_count > false_count:
+                        st.success("✅ VERDADEIRO", icon=None)
+                    else:
+                        # Se houver empate nos indicadores, procurar por contradições explícitas
+                        if "não há contradições" in analysis_lower or "sem contradições" in analysis_lower:
+                            st.success("✅ VERDADEIRO", icon=None)
+                        else:
+                        st.info("ℹ️ INCONCLUSIVO", icon=None)
 
                 analysis_lower = analysis.lower()
                 classify_result(analysis_lower)
